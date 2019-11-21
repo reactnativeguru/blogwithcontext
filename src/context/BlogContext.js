@@ -18,6 +18,23 @@ const blogReducer = (state, action) => {
         }
       ];
       break;
+    case 'edit_blogpost':
+      // iterate through all blog posts
+      return state.map(blogPost => {
+        // ternary expression equiv below
+        // return blogPost.id === action.payload.id
+        // ? action.payload
+        // : blogPost
+
+        // find current blog post
+        if (blogPost.id === action.payload.id) {
+          // find current selected post
+          return action.payload; // return new edited blog post in action.payload
+        } else {
+          return blogPost; // return current post
+        }
+      });
+      break;
 
     default:
       return state;
@@ -41,10 +58,23 @@ const deleteBlogPost = dispatch => {
   };
 };
 
+const editBlogPost = dispatch => {
+  return (id, title, content, callback) => {
+    dispatch({
+      type: 'edit_blogpost',
+      payload: { id: id, title: title, content: content }
+    });
+    if (callback) {
+      callback();
+    }
+  };
+};
+
 // context created from our createDataContext function using defined reducer, function to change state, and initial state
+// all actions added to data context
 export const { Context, Provider } = createDataContext(
   blogReducer,
-  { addBlogPost, deleteBlogPost },
-//   initialState
-  [{title: "test post", content: "test content", id: 1}]
+  { addBlogPost, deleteBlogPost, editBlogPost },
+  //   initialState
+  [{ title: 'test post', content: 'test content', id: 1 }]
 );
